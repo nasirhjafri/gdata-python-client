@@ -185,7 +185,7 @@ class HttpResponse(object):
       return self.body.read(length)
 
   def getheader(self, name):
-    if not self.headers.has_key(name):
+    if name not in self.headers:
       return self.headers[name.lower()]
     return self.headers[name]
 

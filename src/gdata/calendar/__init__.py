@@ -347,7 +347,7 @@ class UriEnumElement(atom.AtomBase):
       self.value = self.enum_map[value]
       return
     # Find the attribute in this class's list of attributes.
-    if self.__class__._attributes.has_key(attribute):
+    if attribute in self.__class__._attributes:
       # Find the member of this class which corresponds to the XML attribute
       # (lookup in current_class._attributes) and set this member to the
       # desired value (using self.__dict__).
@@ -939,7 +939,7 @@ class CalendarEventEntry(gdata.BatchEntry):
                                                         child_tree))
       return
     # Find the element's tag in this class's list of child members
-    if self.__class__._children.has_key(child_tree.tag):
+    if 'child_tree.tag' in self.__class__._children:
       member_name = self.__class__._children[child_tree.tag][0]
       member_class = self.__class__._children[child_tree.tag][1]
       # If the class member is supposed to contain a list, make sure the

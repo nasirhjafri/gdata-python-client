@@ -2,7 +2,10 @@ import cgi
 import urllib
 import time
 import random
-import urlparse
+try:
+  import urlparse
+except ImportError:
+  import urllib.parse as urlparse
 import hmac
 import binascii
 

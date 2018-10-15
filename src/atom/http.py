@@ -37,7 +37,10 @@ __author__ = 'api.jscudder (Jeff Scudder)'
 
 import types
 import os
-import httplib
+try:
+  import httplib
+except ImportError:
+  import http.client as httplib
 import atom.url
 import atom.http_interface
 import socket

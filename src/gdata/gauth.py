@@ -50,7 +50,10 @@ import datetime
 import time
 import random
 import urllib
-import urlparse
+try:
+  import urlparse
+except ImportError:
+  import urllib.parse as urlparse
 import atom.http_core
 
 try:

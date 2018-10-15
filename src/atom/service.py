@@ -35,7 +35,11 @@ import atom.http
 import atom.token_store
 
 import os
-import httplib
+try:
+  import httplib
+except ImportError:
+  import http.client as httplib
+
 import urllib
 import re
 import base64
@@ -657,8 +661,8 @@ def HttpRequest(service, operation, data, uri, extra_headers=None,
 
   # If the list of headers does not include a Content-Length, attempt to 
   # calculate it based on the data object.
-  if (data and not service.additional_headers.has_key('Content-Length') and 
-      not extra_headers.has_key('Content-Length')):
+  if (data and 'Content-Length' not in service.additional_headers and
+          'Content-Length' not in extra_headers):
     content_length = CalculateDataLength(data)
     if content_length:
       extra_headers['Content-Length'] = str(content_length)

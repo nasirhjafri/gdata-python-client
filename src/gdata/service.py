@@ -61,7 +61,10 @@ __author__ = 'api.jscudder (Jeffrey Scudder)'
 
 import re
 import urllib
-import urlparse
+try:
+  import urlparse
+except ImportError:
+  import urllib.parse as urlparse
 try:
   from xml.etree import cElementTree as ElementTree
 except ImportError:
@@ -785,22 +788,22 @@ class GDataService(atom.service.AtomService):
       if captcha_parameters:
         self.__captcha_token = captcha_parameters['token']
         self.__captcha_url = captcha_parameters['url']
-        raise CaptchaRequired, 'Captcha Required'
+        raise CaptchaRequired('Captcha Required')
       elif response_body.splitlines()[0] == 'Error=BadAuthentication':
         self.__captcha_token = None
         self.__captcha_url = None
-        raise BadAuthentication, 'Incorrect username or password'
+        raise BadAuthentication('Incorrect username or password')
       else:
         self.__captcha_token = None
         self.__captcha_url = None
-        raise Error, 'Server responded with a 403 code'
+        raise Error('Server responded with a 403 code')
     elif auth_response.status == 302:
       self.__captcha_token = None
       self.__captcha_url = None
       # Google tries to redirect all bad URLs back to 
       # http://www.google.<locale>. If a redirect
       # attempt is made, assume the user has supplied an incorrect authentication URL
-      raise BadAuthenticationServiceURL, 'Server responded with a 302 code.'
+      raise BadAuthenticationServiceURL('Server responded with a 302 code.')
 
   def ClientLogin(self, username, password, account_type=None, service=None,
       auth_service_url=None, source=None, captcha_token=None, 
@@ -945,8 +948,8 @@ class GDataService(atom.service.AtomService):
     if response.status == 200:
       return result_body
     else:
-      raise RequestError, {'status': response.status,
-          'body': result_body}
+      raise RequestError({'status': response.status,
+          'body': result_body})
 
   def GetWithRetries(self, uri, extra_headers=None, redirects_remaining=4, 
       encoding='UTF-8', converter=None, num_retries=DEFAULT_NUM_RETRIES,
@@ -996,13 +999,13 @@ class GDataService(atom.service.AtomService):
       except SystemExit:
         # Allow this error
         raise
-      except RequestError, e:
+      except RequestError as e:
         # Error 500 is 'internal server error' and warrants a retry
         # Error 503 is 'service unavailable' and warrants a retry
         if e[0]['status'] not in [500, 503]:
           raise e
         # Else, fall through to the retry code...
-      except Exception, e:
+      except Exception as e:
         if logger:
           logger.debug(e)
         # Fall through to the retry code...
@@ -1095,16 +1098,16 @@ class GDataService(atom.service.AtomService):
           return GDataService.Get(self, location, extra_headers, redirects_remaining - 1, 
               encoding=encoding, converter=converter)
         else:
-          raise RequestError, {'status': server_response.status,
+          raise RequestError({'status': server_response.status,
               'reason': '302 received without Location header',
-              'body': result_body}
+              'body': result_body})
       else:
-        raise RequestError, {'status': server_response.status,
+        raise RequestError({'status': server_response.status,
             'reason': 'Redirect received, but redirects_remaining <= 0',
-            'body': result_body}
+            'body': result_body})
     else:
-      raise RequestError, {'status': server_response.status,
-          'reason': server_response.reason, 'body': result_body}
+      raise RequestError({'status': server_response.status,
+          'reason': server_response.reason, 'body': result_body})
 
   def GetMedia(self, uri, extra_headers=None):
     """Returns a MediaSource containing media and its metadata from the given
@@ -1139,7 +1142,7 @@ class GDataService(atom.service.AtomService):
     if isinstance(result, atom.Entry):
       return result
     else:
-      raise UnexpectedReturnType, 'Server did not send an entry' 
+      raise UnexpectedReturnType('Server did not send an entry')
 
   def GetFeed(self, uri, extra_headers=None, 
               converter=gdata.GDataFeedFromString):
@@ -1164,7 +1167,7 @@ class GDataService(atom.service.AtomService):
     if isinstance(result, atom.Feed):
       return result
     else:
-      raise UnexpectedReturnType, 'Server did not send a feed'  
+      raise UnexpectedReturnType('Server did not send a feed')
 
   def GetNext(self, feed):
     """Requests the next 'page' of results in the feed.
@@ -1345,16 +1348,16 @@ class GDataService(atom.service.AtomService):
               extra_headers, url_params, escape_params, 
               redirects_remaining - 1, media_source, converter=converter)
         else:
-          raise RequestError, {'status': server_response.status,
+          raise RequestError({'status': server_response.status,
               'reason': '302 received without Location header',
-              'body': result_body}
+              'body': result_body})
       else:
-        raise RequestError, {'status': server_response.status,
+        raise RequestError({'status': server_response.status,
             'reason': 'Redirect received, but redirects_remaining <= 0',
-            'body': result_body}
+            'body': result_body})
     else:
-      raise RequestError, {'status': server_response.status,
-          'reason': server_response.reason, 'body': result_body}
+      raise RequestError({'status': server_response.status,
+          'reason': server_response.reason, 'body': result_body})
 
   def Put(self, data, uri, extra_headers=None, url_params=None, 
           escape_params=True, redirects_remaining=3, media_source=None,
@@ -1442,16 +1445,16 @@ class GDataService(atom.service.AtomService):
           return GDataService.Delete(self, location, extra_headers, 
               url_params, escape_params, redirects_remaining - 1)
         else:
-          raise RequestError, {'status': server_response.status,
+          raise RequestError({'status': server_response.status,
               'reason': '302 received without Location header',
-              'body': result_body}
+              'body': result_body})
       else:
-        raise RequestError, {'status': server_response.status,
+        raise RequestError({'status': server_response.status,
             'reason': 'Redirect received, but redirects_remaining <= 0',
-            'body': result_body}
+            'body': result_body})
     else:
-      raise RequestError, {'status': server_response.status,
-          'reason': server_response.reason, 'body': result_body}
+      raise RequestError({'status': server_response.status,
+          'reason': server_response.reason, 'body': result_body})
 
 
 def ExtractToken(url, scopes_included_in_next=True):

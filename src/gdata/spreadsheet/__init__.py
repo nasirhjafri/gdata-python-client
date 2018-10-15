@@ -318,7 +318,7 @@ class SpreadsheetsList(gdata.GDataEntry):
   # convert custom attributes to members
   def _ConvertElementTreeToMember(self, child_tree):
     # Find the element's tag in this class's list of child members
-    if self.__class__._children.has_key(child_tree.tag):
+    if 'child_tree.tag' in self.__class__._children:
       member_name = self.__class__._children[child_tree.tag][0]
       member_class = self.__class__._children[child_tree.tag][1]
       # If the class member is supposed to contain a list, make sure the

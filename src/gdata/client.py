@@ -1037,7 +1037,7 @@ class ResumableUploader(object):
                                      http_request=http_request,
                                      desired_class=self.desired_class)
       return response
-    except RequestError, error:
+    except RequestError as error:
       if error.status == 308:
         return None
       else:
@@ -1183,7 +1183,7 @@ class ResumableUploader(object):
       else:
         raise error_from_response(
             '%s returned by server' % response.status, response, RequestError)
-    except RequestError, error:
+    except RequestError as error:
       if error.status == 308:
         for pair in error.headers:
           if pair[0].capitalize() == 'Range':

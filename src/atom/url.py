@@ -17,8 +17,11 @@
 
 __author__ = 'api.jscudder (Jeff Scudder)'
 
+try:
+  import urlparse
+except ImportError:
+  import urllib.parse as urlparse
 
-import urlparse
 import urllib
 
 
